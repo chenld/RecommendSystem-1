@@ -1,0 +1,60 @@
+package com.itzzq.j2ee.recommandSystem.commons.domain;
+
+import java.io.Serializable;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+
+/**
+ * Base entity type to hold common Id property. To be extended.
+ * 
+ * @author itzzq
+ */
+@MappedSuperclass
+public class BaseEntity implements Serializable {
+	private static final long serialVersionUID = 568379222048217476L;
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	/**
+	 * When using HashSet instead of Collection,
+	 * HashSet.contain() needs to override these two methods.
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		// 判断的依据是，如果id不为null的话，就返回id的哈希码
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final BaseEntity other = (BaseEntity) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+}

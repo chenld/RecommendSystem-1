@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/general.xhtml">
+
+	<ui:define name="title">
+		<h:outputText value="推荐系统 | 主页" />
+	</ui:define>
+	<ui:define name="header">
+		<h:outputText value="主页" />
+	</ui:define>
+
+	<ui:define name="appcontent">
+		<!-- 欢迎提醒框 -->
+		<f:metadata>
+			<f:event type="postAddToView" listener="#{uiUtils.greetOnViewLoad}"
+				update="growlMessages" />
+			<f:attribute name="userName" value="#{user.userName}" />
+		</f:metadata>
+		<div id="newapp">
+			<p:carousel id="basicCarousel" value="#{newapps}" var="newapp"
+				itemStyleClass="newappItem">
+				<f:facet name="header">
+					<h:outputText styleClass="ui-icon ui-icon-flag" />
+					<span style="position: relative; left: 20px; top: -15px;">最新应用</span>
+				</f:facet>
+				<h:panelGrid columns="1" style="width:100%" cellpadding="5">
+					<p:graphicImage value="/appresources/images/apps/#{newapp.id}.jpg" />
+
+					<h:outputText value="应用名: #{newapp.name}" />
+
+					<h:outputText value="推出时间: #{newapp.time}" />
+
+					<h:outputText value="点赞数: #{newapp.heat}" />
+				</h:panelGrid>
+
+			</p:carousel>
+		</div>
+		<div id="appcontent">
+			<p:panel header="应用商场">
+				<h:form id="appform">
+					<p:dataGrid var="thisapp" value="#{apps}" columns="3" rows="9"
+						paginator="true"
+						paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+						rowsPerPageTemplate="9,12,15">
+
+						<p:panel header="#{thisapp.name}" style="text-align:center">
+							<h:panelGrid columns="1" style="width:95%">
+								<h:outputText value="推出时间：#{thisapp.time}" />
+								<h:panelGrid columns="2"
+									style="margin-left:60px; margin-right:-60px">
+									<h:outputText value="点赞：#{thisapp.heat}" />
+									<p:commandLink update=":growlMessages" action="lovethisapp"
+										title="添加为我的应用！">
+										<h:outputText styleClass="ui-icon ui-icon-heart"
+											style="margin-left:5px; margin-bottom:2px;" />
+										<f:setPropertyActionListener value="#{thisapp}"
+											target="#{appService.selectedApp}" />
+									</p:commandLink>
+								</h:panelGrid>
+							</h:panelGrid>
+						</p:panel>
+					</p:dataGrid>
+				</h:form>
+			</p:panel>
+		</div>
+	</ui:define>
+
+	<ui:define name="userList">
+		<!-- 用户列表 -->
+		<div id="userlist">
+			<p:menu>
+				<p:submenu label="用户列表" />
+			</p:menu>
+			<p:scrollPanel style="height:400px">
+				<p:dataList value="#{users}" var="useritem">
+				#{useritem.userName}
+				<p:commandLink update=":growlMessages" action="addBuddy"
+						title="添加为我的好友！" id="addbuddylink">
+						<h:outputText styleClass="ui-icon ui-icon-heart" />
+						<f:setPropertyActionListener value="#{useritem}"
+							target="#{userService.selectedBuddy}" />
+					</p:commandLink>
+				</p:dataList>
+			</p:scrollPanel>
+		</div>
+	</ui:define>
+
+	<ui:define name="recommandcontent">
+		<div id="recommandlist">
+
+			<p:menu style="width:290px;">
+				<p:submenu label="应用推荐" />
+			</p:menu>
+			<p:dataList value="#{recommandApps}" var="recommanditem"
+				type="ordered" itemType="A">
+				<div id="recommanditem">
+					<div id="firstline">
+						<h:outputText value="#{recommanditem.name}"
+							style="font-size:1.3em; color:darkslategray;" />
+						<p:commandLink update=":growlMessages" action="lovethisapp"
+							title="添加为我的应用！" style="float:right;">
+							<h:outputText styleClass="ui-icon ui-icon-heart" />
+							<f:setPropertyActionListener value="#{recommanditem}"
+								target="#{appService.selectedApp}" />
+						</p:commandLink>
+					</div>
+
+					<div id="secondline">
+						<h:outputText styleClass="ui-icon ui-icon-circle-arrow-n"
+							style="float:left;" />
+						<h:outputText value="点赞：#{recommanditem.heat}"
+							style="font-size:1.1em" />
+					</div>
+				</div>
+			</p:dataList>
+		</div>
+	</ui:define>
+</ui:composition>

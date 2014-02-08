@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow
+        http://www.springframework.org/schema/webflow/spring-webflow-2.0.xsd">
+
+	<secured attributes="ROLE_USER" />
+
+	<var name="app" class="com.itzzq.j2ee.recommandSystem.domain.AppEntity" />
+	<var name="uiUtils" class="com.itzzq.j2ee.recommandSystem.ui.utils.UIUtils" />
+
+	<on-start>
+		<evaluate expression="userService.loadUserEntityByUsername(currentUser.name)"
+			result="flowScope.user" />
+		<evaluate expression="appService.getAllApps()" result="flowScope.apps" />
+		<evaluate expression="userService.getAllUsers()" result="flowScope.users" />
+		<evaluate expression="appService.getNewApps()" result="flowScope.newapps" />
+		<evaluate expression="recommandService.itemBasedCF(currentUser.name)"
+			result="flowScope.recommandApps" />
+	</on-start>
+
+	<view-state id="home" view="accountHome.xhtml" model="app">
+		<transition on="home" to="home" />
+		<transition on="lovethisapp">
+			<evaluate
+				expression="userService.addLovedApp(user.userName, appService.selectedApp)" />
+		</transition>
+		<transition on="addBuddy">
+			<evaluate
+				expression="userService.addBuddy(user.userName, userService.selectedBuddy)" />
+		</transition>
+		<transition on="myapp" to="myapp">
+			<evaluate expression="userService.showLovedApp(user.userName)"
+				result="flowScope.lovedapps" />
+		</transition>
+		<transition on="myfriend" to="myfriend">
+			<evaluate expression="userService.showBuddyList(user.userName)"
+				result="flowScope.buddylist" />
+		</transition>
+	</view-state>
+
+	<view-state id="myapp" view="myapp.xhtml" model="app">
+		<transition on="home" to="home">
+			<evaluate expression="recommandService.itemBasedCF(currentUser.name)"
+				result="flowScope.recommandApps" />
+		</transition>
+		<transition on="deletethisapp" to="myapp">
+			<evaluate
+				expression="userService.deleteLovedApp(user.userName, appService.selectedApp)" />
+			<evaluate expression="userService.showLovedApp(user.userName)"
+				result="flowScope.lovedapps" />
+		</transition>
+		<transition on="myapp" to="myapp">
+			<evaluate expression="userService.showLovedApp(user.userName)"
+				result="flowScope.lovedapps" />
+		</transition>
+		<transition on="myfriend" to="myfriend">
+			<evaluate expression="userService.showBuddyList(user.userName)"
+				result="flowScope.buddylist" />
+		</transition>
+	</view-state>
+
+	<view-state id="myfriend" view="myfriend.xhtml">
+		<transition on="home" to="home" />
+		<transition on="myapp" to="myapp">
+			<evaluate expression="userService.showLovedApp(user.userName)"
+				result="flowScope.lovedapps" />
+		</transition>
+		<transition on="removeBuddy" to="myfriend">
+			<evaluate
+				expression="userService.removeBuddy(user.userName, userService.selectedBuddy)" />
+			<evaluate expression="userService.showBuddyList(user.userName)"
+				result="flowScope.buddylist" />
+		</transition>
+		<transition on="myfriend" to="myfriend">
+			<evaluate expression="userService.showBuddyList(user.userName)"
+				result="flowScope.buddylist" />
+		</transition>
+	</view-state>
+</flow>

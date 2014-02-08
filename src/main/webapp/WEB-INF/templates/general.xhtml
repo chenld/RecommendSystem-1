@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<f:view contentType="text/html">
+
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title><ui:insert name="title" /></title>
+		<!-- 网站整体风格设计 -->
+		<link rel="stylesheet" type="text/css"
+			href="${request.contextPath}/resources/css/style.css" />
+		<link rel="shortcut icon"
+			href="${request.contextPath}/resources/css/images/favicon.png" />
+	</h:head>
+
+	<h:body>
+		<p:ajaxStatus onstart="statusDialog.show();"
+			onsuccess="statusDialog.hide();" />
+
+		<p:dialog modal="true" widgetVar="statusDialog" header="处理中..."
+			draggable="true" closable="false">
+			<p:graphicImage value="/css/images/ajaxloadingbar.gif" />
+		</p:dialog>
+		<p:growl id="growlMessages" showDetail="false" sticky="false"
+			life="2000" />
+
+		<div id="container">
+			<div id="greeting">
+				<c:if test="${not empty currentUser.name}">
+					<b>欢迎,</b> ${user.userName} | <a
+						href="${request.contextPath}/app/logout"><img alt=""
+						title="Logout"
+						src="${request.contextPath}/resources/css/images/logout.png" /></a>
+				</c:if>
+			</div>
+			<div id="header">
+				<h1>
+					<ui:insert name="header" />
+				</h1>
+			</div>
+			<div id="line" />
+			<div id="content">
+				<c:if test="${not empty currentUser.name}">
+					<!-- 布局 -->
+					<p:layout id="accountlayout">
+
+						<p:layoutUnit position="west" resizable="false" size="190">
+							<h:form>
+								<!-- 导航 -->
+								<p:menu>
+									<p:submenu label="导航">
+										<p:menuitem value="主页" action="home" immediate="true"
+											icon="ui-icon-home" />
+										<p:menuitem value="我的应用" action="myapp" immediate="true"
+											icon="ui-icon-star" update=":growlMessages" />
+										<p:menuitem value="我的好友" action="myfriend" immediate="true"
+											icon="ui-icon-person" />
+									</p:submenu>
+								</p:menu>
+								
+								<ui:insert name="userList" />
+								
+							</h:form>
+						</p:layoutUnit>
+
+						<!-- 应用商场 -->
+						<p:layoutUnit position="center">
+							<ui:insert name="appcontent" />
+						</p:layoutUnit>
+
+						<!-- 推荐 -->
+						<p:layoutUnit position="east" resizable="false" size="305">
+							<ui:insert name="recommandcontent" />
+						</p:layoutUnit>
+					</p:layout>
+
+				</c:if>
+				<ui:insert name="content" />
+			</div>
+		</div>
+
+		<div id="footer">
+			<ui:insert name="footer" />
+			<div id="copyright">
+				<p>Copyright © 2013 by ITZZQ. All Rights Reserved.</p>
+			</div>
+		</div>
+	</h:body>
+</f:view>
+</html>

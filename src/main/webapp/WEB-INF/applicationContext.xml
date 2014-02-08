@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<import resource="datasource-config.xml" />
+	<import resource="webflow-config.xml" />
+	<import resource="security-config.xml" />
+
+	<!-- DAO declarations -->
+	<bean id="userDao" class="com.itzzq.j2ee.recommandSystem.dao.UserJpaDao" />
+	<bean id="appDao" class="com.itzzq.j2ee.recommandSystem.dao.AppJpaDao" />
+
+	<!-- Services declarations -->
+	<bean id="userService"
+		class="com.itzzq.j2ee.recommandSystem.services.impl.UserServiceImpl">
+		<property name="userDao" ref="userDao" />
+	</bean>
+
+	<bean id="userAuthenticationProviderService"
+		class="com.itzzq.j2ee.recommandSystem.services.impl.UserAuthenticationProviderServiceImpl">
+		<property name="authenticationManager" ref="authenticationManager" />
+	</bean>
+
+	<bean id="appService"
+		class="com.itzzq.j2ee.recommandSystem.services.impl.AppServiceImpl">
+		<property name="appDao" ref="appDao" />
+	</bean>
+	
+	<bean id="recommandService"
+		class="com.itzzq.j2ee.recommandSystem.services.impl.RecommandServiceImpl">
+		<property name="appDao" ref="appDao" />
+		<property name="userDao" ref="userDao" />
+	</bean>
+	
+</beans>
